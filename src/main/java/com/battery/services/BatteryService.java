@@ -10,8 +10,9 @@ public class BatteryService {
 
     private final List<Battery> batteries = new ArrayList<>();
 
-    public void saveBattery(Battery battery) {
+    public List<Battery> saveBattery(Battery battery) {
         batteries.add(battery);
+        return batteries;
     }
 
     public List<Battery> findBatteriesByPostcodeRange(String startPostcode, String endPostcode) {
