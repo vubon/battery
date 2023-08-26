@@ -19,21 +19,24 @@ import com.battery.security.JwtHelper;
 @RequestMapping("/api/v1")
 @Tag(name = "Login API")
 public class LoginController {
-    @Autowired
-    private UserDetailsService userDetailsService;
+
+    private final UserDetailsService userDetailsService;
+    private final AuthenticationManager manager;
+    private final JwtHelper jwtHelper;
 
     @Autowired
-    private AuthenticationManager manager;
-
-    @Autowired
-    private JwtHelper jwtHelper;
+    public LoginController(UserDetailsService userDetailsService, AuthenticationManager manager, JwtHelper jwtHelper) {
+        this.userDetailsService = userDetailsService;
+        this.manager = manager;
+        this.jwtHelper = jwtHelper;
+    }
 
     @PostMapping("/login")
     @Operation(summary = "JWT Token API")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         this.doAuthenticate(request.getUsername(), request.getPassword());
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-        String token = jwtHelper.generateToken(userDetails);
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+        String token = this.jwtHelper.generateToken(userDetails);
 
         LoginResponse loginResponse = new LoginResponse(request.getUsername(), token);
         return ResponseEntity.ok(loginResponse);
@@ -42,7 +45,7 @@ public class LoginController {
     private void doAuthenticate(String username, String password) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
         try {
-            manager.authenticate(authentication);
+            this.manager.authenticate(authentication);
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid username or password");
         }

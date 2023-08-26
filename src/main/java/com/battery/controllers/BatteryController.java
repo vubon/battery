@@ -25,8 +25,12 @@ import java.util.stream.Collectors;
 @Tag(name = "Battery APIs")
 public class BatteryController {
 
+    private final BatteryService batteryService;
+
     @Autowired
-    private BatteryService batteryService;
+    public BatteryController(BatteryService  batteryService){
+        this.batteryService = batteryService;
+    }
 
     @PostMapping(value = "/batteries", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Creates batteries with provided details")
@@ -37,7 +41,7 @@ public class BatteryController {
         }
         for (Battery battery : batteries) {
             battery.setId(UUID.randomUUID());
-            batteryService.saveBattery(battery);
+            this.batteryService.saveBattery(battery);
         }
 
         CustomResponse customResponse = new CustomResponse("Batteries created successfully", HttpStatus.CREATED.value());
@@ -63,14 +67,14 @@ public class BatteryController {
         List<Battery> batteriesInRange;
 
         if (minCapacity != null && maxCapacity != null) {
-            batteriesInRange = batteryService.getBatteriesByPostcodeRangeAndCapacity(
+            batteriesInRange = this.batteryService.getBatteriesByPostcodeRangeAndCapacity(
                     minCapacity,
                     maxCapacity,
                     startPostcode,
                     endPostcode
             );
         } else {
-            batteriesInRange = batteryService.getBatteriesByPostcodeRange(startPostcode, endPostcode);
+            batteriesInRange = this.batteryService.getBatteriesByPostcodeRange(startPostcode, endPostcode);
         }
 
         List<BatteryInfo> batteryInfoList = batteriesInRange.stream()

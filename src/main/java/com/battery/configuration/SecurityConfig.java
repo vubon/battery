@@ -14,11 +14,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    private JwtAuthenticationEntryPoint point;
+    private final JwtAuthenticationEntryPoint point;
+    private final JwtAuthenticationFilter filter;
 
     @Autowired
-    private JwtAuthenticationFilter filter;
+    public SecurityConfig(JwtAuthenticationEntryPoint point, JwtAuthenticationFilter filter) {
+        this.point = point;
+        this.filter = filter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -28,10 +31,10 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(exc -> exc.authenticationEntryPoint(point))
+                .exceptionHandling(exc -> exc.authenticationEntryPoint(this.point))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(this.filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
