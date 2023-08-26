@@ -2,20 +2,21 @@ package com.battery.services;
 
 import com.battery.models.Battery;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class BatteryService {
 
-    private final List<Battery> batteries = new ArrayList<>();
+    private final List<Battery> batteries = new CopyOnWriteArrayList<>();
 
     public void saveBattery(Battery battery) {
         batteries.add(battery);
     }
 
     public List<Battery> getBatteriesByPostcodeRange(String startPostcode, String endPostcode) {
-        List<Battery> batteriesInRange = new ArrayList<>();
+        List<Battery> batteriesInRange = new CopyOnWriteArrayList<>();
         for (Battery battery : batteries) {
             if (isPostcodeInRange(battery, startPostcode, endPostcode)) {
                 batteriesInRange.add(battery);
@@ -30,7 +31,7 @@ public class BatteryService {
             String startPostcode,
             String endPostcode) {
 
-        List<Battery> filteredBatteries = new ArrayList<>();
+        List<Battery> filteredBatteries = new CopyOnWriteArrayList<>();
 
         for (Battery battery : batteries) {
             int capacity = battery.getCapacity();
