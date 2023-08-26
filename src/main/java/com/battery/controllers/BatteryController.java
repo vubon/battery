@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ public class BatteryController {
                 .body(customResponse);
     }
 
-    @GetMapping(value = "/batteries/within-postcode-capacity-range", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/batteries", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBatteriesWithinPostcodeRangeAndCapacity(
             @RequestParam(required = false) String startPostcode,
             @RequestParam(required = false) String endPostcode,
