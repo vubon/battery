@@ -25,7 +25,7 @@ public class BatteryService {
         return batteriesInRange;
     }
 
-    public List<Battery> getBatteriesByPostcodeRangeAndCapacity(
+    public List<Battery> getBatteriesByPostcodeAndCapacityRange(
             int minCapacity,
             int maxCapacity,
             String startPostcode,

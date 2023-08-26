@@ -102,7 +102,7 @@ public class BatteryController {
         List<Battery> batteriesInRange;
 
         if (minCapacity != null && maxCapacity != null) {
-            batteriesInRange = this.batteryService.getBatteriesByPostcodeRangeAndCapacity(
+            batteriesInRange = this.batteryService.getBatteriesByPostcodeAndCapacityRange(
                     minCapacity,
                     maxCapacity,
                     startPostcode,

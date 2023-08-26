@@ -127,7 +127,7 @@ public class BatteryControllerTests {
         batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000, null));
         batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000, null));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
-        Mockito.when(batteryService.getBatteriesByPostcodeRangeAndCapacity(
+        Mockito.when(batteryService.getBatteriesByPostcodeAndCapacityRange(
                         Mockito.anyInt(), Mockito.anyInt(),
                         Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(batteries);
