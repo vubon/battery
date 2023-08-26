@@ -15,7 +15,7 @@ public class BatteryService {
         return batteries;
     }
 
-    public List<Battery> findBatteriesByPostcodeRange(String startPostcode, String endPostcode) {
+    public List<Battery> getBatteriesByPostcodeRange(String startPostcode, String endPostcode) {
         List<Battery> batteriesInRange = new ArrayList<>();
         for (Battery battery : batteries) {
             if (battery.getPostcode().compareTo(startPostcode) >= 0 && battery.getPostcode().compareTo(endPostcode) <= 0) {

@@ -60,7 +60,7 @@ public class BatteryController {
                     endPostcode
             );
         } else {
-            batteriesInRange = batteryService.findBatteriesByPostcodeRange(startPostcode, endPostcode);
+            batteriesInRange = batteryService.getBatteriesByPostcodeRange(startPostcode, endPostcode);
         }
 
         List<BatteryInfo> batteryInfoList = batteriesInRange.stream()
