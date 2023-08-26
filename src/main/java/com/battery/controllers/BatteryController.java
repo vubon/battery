@@ -9,15 +9,20 @@ import com.battery.services.BatteryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,17 +33,45 @@ public class BatteryController {
     private final BatteryService batteryService;
 
     @Autowired
-    public BatteryController(BatteryService  batteryService){
+    public BatteryController(BatteryService batteryService) {
         this.batteryService = batteryService;
     }
 
     @PostMapping(value = "/batteries", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Creates batteries with provided details")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<CustomResponse> createBattery(@RequestBody(required = false) List<Battery> batteries) {
-        if (batteries == null){
-            return ResponseEntity.badRequest().body(new CustomResponse("Should have request body", 400));
+    public ResponseEntity<?> createBattery(@RequestBody List<Battery> batteries) {
+
+        // Data Validation
+        if (batteries == null || batteries.isEmpty()) {
+            return ResponseEntity.badRequest().body(new CustomResponse("Should have a non-empty request body", 400));
         }
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        CopyOnWriteArrayList<Battery> validatedBatteries = new CopyOnWriteArrayList<>();
+        Boolean hasError = null;
+
+        for (Battery battery : batteries) {
+            List<String> errors = new ArrayList<>();
+
+            Set<ConstraintViolation<Battery>> violations = validator.validate(battery);
+            for (ConstraintViolation<Battery> violation : violations) {
+               errors.add(violation.getMessage());
+               hasError = true;
+            }
+            battery.setErrors(errors);
+            validatedBatteries.add(battery);
+        }
+
+        if (Boolean.TRUE.equals(hasError)){
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(validatedBatteries);
+        }
+
+
+        // Save Battery
         for (Battery battery : batteries) {
             battery.setId(UUID.randomUUID());
             this.batteryService.saveBattery(battery);
@@ -51,7 +84,7 @@ public class BatteryController {
     }
 
     @GetMapping(value = "/batteries", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary= "Query batteries with Postcode and Capacity")
+    @Operation(summary = "Query batteries with Postcode and Capacity")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> getBatteriesWithinPostcodeRangeAndCapacity(
             @RequestParam(required = false) String startPostcode,
@@ -61,7 +94,9 @@ public class BatteryController {
 
 
         if (startPostcode == null || endPostcode == null) {
-            return ResponseEntity.badRequest().body(new CustomResponse("startPostcode and endPostcode are required", 400));
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new CustomResponse("startPostcode and endPostcode are required", 400));
         }
 
         List<Battery> batteriesInRange;

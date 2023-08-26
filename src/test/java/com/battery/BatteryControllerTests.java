@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.containsString;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -51,8 +50,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000, null));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000, null));
 
         // Perform POST request
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/batteries")
@@ -71,8 +70,26 @@ public class BatteryControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/batteries")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string(containsString("Should have request body")));
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateBatteriesWhenInvalidData() throws Exception {
+        // Generate a JWT token using your JwtHelper class
+        UserDetails userDetails = userDetailsService.loadUserByUsername("vubon");
+        String token = jwtHelper.generateToken(userDetails);
+
+        // Prepare mock data
+        List<Battery> batteries = new ArrayList<>();
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000, null));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 90000, null));
+
+        // Perform POST request
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/batteries")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(batteries)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -83,8 +100,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000, null));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000, null));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
         Mockito.when(batteryService.getBatteriesByPostcodeRange(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(batteries);
@@ -107,8 +124,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000, null));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000, null));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
         Mockito.when(batteryService.getBatteriesByPostcodeRangeAndCapacity(
                         Mockito.anyInt(), Mockito.anyInt(),
@@ -135,8 +152,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
-        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000, null));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000, null));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
         Mockito.when(batteryService.getBatteriesByPostcodeRange(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(batteries);
