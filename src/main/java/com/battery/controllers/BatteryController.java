@@ -6,6 +6,9 @@ import com.battery.models.Battery;
 import com.battery.models.BatteryStatistics;
 import com.battery.models.BatteryInfo;
 import com.battery.services.BatteryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,12 +22,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Battery APIs")
 public class BatteryController {
 
     @Autowired
     private BatteryService batteryService;
 
     @PostMapping(value = "/batteries", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Creates batteries with provided details")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<CustomResponse> createBattery(@RequestBody(required = false) List<Battery> batteries) {
         if (batteries == null){
             return ResponseEntity.badRequest().body(new CustomResponse("Should have request body", 400));
@@ -41,6 +47,8 @@ public class BatteryController {
     }
 
     @GetMapping(value = "/batteries", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary= "Query batteries with Postcode and Capacity")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> getBatteriesWithinPostcodeRangeAndCapacity(
             @RequestParam(required = false) String startPostcode,
             @RequestParam(required = false) String endPostcode,
