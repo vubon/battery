@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,6 +30,7 @@ public class BatteryController {
             return ResponseEntity.badRequest().body(new CustomResponse("Should have request body", 400));
         }
         for (Battery battery : batteries) {
+            battery.setId(UUID.randomUUID());
             batteryService.saveBattery(battery);
         }
 
@@ -64,7 +66,7 @@ public class BatteryController {
         }
 
         List<BatteryInfo> batteryInfoList = batteriesInRange.stream()
-                .map(battery -> new BatteryInfo(battery.getName(), battery.getCapacity(), battery.getPostcode()))
+                .map(battery -> new BatteryInfo(battery.getName(), battery.getCapacity(), battery.getPostcode(), battery.getId()))
                 .sorted(Comparator.comparing(BatteryInfo::getName))
                 .collect(Collectors.toList());
 
