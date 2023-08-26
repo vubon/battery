@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.containsString;
 
 @RunWith(SpringRunner.class)
@@ -49,11 +51,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery("Battery 1", "12345", 1000));
-        batteries.add(new Battery("Battery 2", "67890", 2000));
-        // Mock batteryService.saveBattery to return the saved batteries
-        Mockito.when(batteryService.saveBattery(Mockito.any(Battery.class)))
-                .thenReturn(batteries);
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
 
         // Perform POST request
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/batteries")
@@ -84,8 +83,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery("Battery 1", "12345", 1000));
-        batteries.add(new Battery("Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
         Mockito.when(batteryService.getBatteriesByPostcodeRange(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(batteries);
@@ -108,8 +107,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery("Battery 1", "12345", 1000));
-        batteries.add(new Battery("Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
         Mockito.when(batteryService.getBatteriesByPostcodeRangeAndCapacity(
                         Mockito.anyInt(), Mockito.anyInt(),
@@ -136,8 +135,8 @@ public class BatteryControllerTests {
 
         // Prepare mock data
         List<Battery> batteries = new ArrayList<>();
-        batteries.add(new Battery("Battery 1", "12345", 1000));
-        batteries.add(new Battery("Battery 2", "67890", 2000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 1", "12345", 1000));
+        batteries.add(new Battery(UUID.randomUUID(), "Battery 2", "67890", 2000));
         // Mock batteryService.getBatteriesByPostcodeRange to return the mock batteries
         Mockito.when(batteryService.getBatteriesByPostcodeRange(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(batteries);
