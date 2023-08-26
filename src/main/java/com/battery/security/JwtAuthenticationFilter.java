@@ -37,16 +37,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 username = this.jwtHelper.extractUsername(token);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                logger.info("JWT: IllegalArgumentException");
             } catch (ExpiredJwtException e) {
-                logger.info(" Invalid token");
-                e.printStackTrace();
+                logger.info("JWT: Invalid token");
             } catch (MalformedJwtException e) {
-                logger.info("Malformed");
-                e.printStackTrace();
+                logger.info("JWT: Malformed");
             } catch (Exception e) {
-                logger.info("final error");
-                e.printStackTrace();
+                logger.info("JWT: final error");
             }
         }
 
@@ -60,10 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        }else {
-            logger.info("Authentication failed");
         }
-
         filterChain.doFilter(request, response);
     }
 }
